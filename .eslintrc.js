@@ -19,14 +19,16 @@ module.exports = {
 		'prettier'
   ],
   rules: {
-		"prettier/prettier": "error",
-		"import/extensions": [
-			"error",
-			"ignorePackages",
+		'prettier/prettier': 'error',
+		'import/extensions': [
+			'error',
+			'ignorePackages',
 			{
-				"ts": "never"
+				'ts': 'never'
 			}
-		]
+		],
+		camelcase: 'off',
+		'no-useless-constructor': 'off'
 	},
 	settings: {
 		"import/resolver": {
