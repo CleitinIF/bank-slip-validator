@@ -9,13 +9,11 @@ bankSlipRoutes.get(
 	'/validate/:bank_slip_code',
 	(request: Request<{ bank_slip_code: any }>, response) => {
 		const { bank_slip_code } = request.params;
-		const model = new DealerShipBillet(bank_slip_code);
+		const model = new BankBillet(bank_slip_code);
 
-		console.log(model.getDueDate());
+		const billetInfo = model.getBilletInfo();
 
-		// const checkBankSlip = new CheckBankSlipService();
-		// checkBankSlip.run(request.params.bank_slip_code);
-		return response.json({ message: 'hello world' });
+		return response.status(200).json(billetInfo);
 	},
 );
 
