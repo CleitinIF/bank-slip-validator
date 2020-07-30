@@ -1,15 +1,23 @@
 import { Router, Request } from 'express';
-import CheckBankSlipService from '../services/check-bank-slip.service';
 import DealerShipBillet from '../models/dealership-billet.model';
 import BankBillet from '../models/bank-billet.model';
+import RequiredValidator from '../validators/required.validator';
+import NumberValidator from '../validators/number.validator';
 
 const bankSlipRoutes = Router();
 
 bankSlipRoutes.get(
-	'/validate/:bank_slip_code',
-	(request: Request<{ bank_slip_code: any }>, response) => {
-		const { bank_slip_code } = request.params;
-		const model = new BankBillet(bank_slip_code);
+	'/validate/:billet_code',
+	(request: Request<{ billet_code: any }>, response) => {
+		const { billet_code } = request.params;
+
+		RequiredValidator.validate(billet_code);
+		NumberValidator.validate(billet_code);
+
+		const model =
+			billet_code.length === 47
+				? new BankBillet(billet_code)
+				: new DealerShipBillet(billet_code);
 
 		const billetInfo = model.getBilletInfo();
 

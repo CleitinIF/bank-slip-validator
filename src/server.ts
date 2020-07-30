@@ -3,7 +3,7 @@ import 'express-async-errors';
 
 import './config/dotenv';
 import routes from './routes';
-import ServerError from './presentation/errors/server.error';
+import ServerError from './errors/server.error';
 
 const PORT = process.env.PORT || 4000;
 
@@ -14,15 +14,16 @@ app.use(routes);
 
 app.use(
 	(err: Error, request: Request, response: Response, next: NextFunction) => {
-		if (err)
-			return response.status(400).json({
-				status: 'error',
+		if (err instanceof ServerError) {
+			return response.status(500).json({
+				status: err.statusCode,
 				message: err.message,
 			});
+		}
 
-		return response.status(500).json({
+		return response.status(400).json({
 			status: 'error',
-			message: 'Internal server error',
+			message: err.message,
 		});
 	},
 );
