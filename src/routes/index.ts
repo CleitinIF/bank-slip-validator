@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import bankSlipRoutes from './bank-slip.routes';
+import bankSlipRoutes from './billet.routes';
 
 const routes = Router();
 
-routes.use('/bank_slip', bankSlipRoutes);
+routes.use('/billet', bankSlipRoutes);
 
 export default routes;

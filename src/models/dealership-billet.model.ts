@@ -1,4 +1,4 @@
-import { LengthValidator } from '../validators/length.validator';
+import LengthValidator from '../validators/length.validator';
 import { InvalidParamError } from '../errors/invalid-param.error';
 import parseValue from '../utils/parseValue';
 
@@ -25,7 +25,6 @@ class DealerShipBillet {
 		this.verifyDigits();
 		this.generateBarCode();
 
-		this.findDueDate();
 		this.findValue();
 	}
 
@@ -60,29 +59,23 @@ class DealerShipBillet {
 			.split('') // transforma em array
 			.slice(0, -1) // remove o ultimo elemento (Dígito verificador)
 			.reverse() // inverte o array para multiplicar (2*1*2*1*...)
-			.map((item) => parseInt(item)) // transforma a string em um inteiro
 			// realiza a multiplicação
 			.reduce((prevValue, currentValue, index) => {
-				if (index % 2 === 0) {
+				if (index % 2 === 0 || index === 0) {
 					const sum = (Number(currentValue) * 2)
 						.toString()
 						.split('')
 						.map((item) => parseInt(item))
 						.reduce((prevValue, currentValue) => prevValue + currentValue);
 
-					return prevValue + sum;
+					return prevValue + Number(sum);
 				} else {
 					return prevValue + Number(currentValue) * 1;
 				}
 			}, 0);
 
 		const subtraction = 10 - (sum % 10);
-		const verifyDigit =
-			subtraction === 0 || subtraction === 1
-				? 0
-				: subtraction === 10
-				? 1
-				: subtraction;
+		const verifyDigit = subtraction === 10 ? 0 : subtraction;
 
 		if (verifyDigit !== Number(field[field.length - 1])) {
 			throw new Error(`Dígito verificador inválido`);
@@ -136,27 +129,9 @@ class DealerShipBillet {
 		// return subtraction;
 	}
 
-	private findDueDate(): void {
-		const date = this.separatedContent[3].slice(0, 8);
-
-		const day = Number(date.slice(6, 8));
-		const month = Number(date.slice(4, 6));
-		const year = Number(date.slice(0, 4));
-
-		const dueDate = new Date(year, month, day);
-		this.dueDate = dueDate
-			.toISOString()
-			.substr(0, 10)
-			.split('-')
-			.reverse()
-			.join('/');
-	}
-
 	private findValue(): void {
-		const valueOfFirstField = this.separatedContent[0].slice(4);
-		const valueOfSecondField = this.separatedContent[1].slice(0, 3);
-
-		this.value = parseValue(valueOfFirstField + valueOfSecondField);
+		const value = this.barCode.slice(5, 15);
+		this.value = parseValue(value);
 	}
 
 	public getBilletInfo(): Info {

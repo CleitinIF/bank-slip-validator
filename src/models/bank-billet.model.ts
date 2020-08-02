@@ -1,5 +1,5 @@
 import { InvalidParamError } from '../errors/invalid-param.error';
-import { LengthValidator } from '../validators/length.validator';
+import LengthValidator from '../validators/length.validator';
 import parseValue from '../utils/parseValue';
 
 interface Info {
